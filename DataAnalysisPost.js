@@ -8,7 +8,7 @@ const getRequest = async(email, retries = 3) => {
             const headers = response.headers
             const data = await response.json()
             console.log(headers);
-            return [headers.get('id'), data]
+            return [headers.get('x-assignment-id'), data]
         } else {
             console.log("request failed", response.status);
             if (response.status === 500) {
@@ -19,7 +19,7 @@ const getRequest = async(email, retries = 3) => {
                 }
                 if (response) {
                     console.log("Request succesful");
-                    return [null, null];
+                    return response;
                 }
             }
         }
@@ -54,16 +54,16 @@ const postResponse = async(email, [assignmentId, highestFreqWord]) => {
         })
         console.log(`Submitted`);
         const data = await response.json();
-        console.log(data);
+        console.log(data.assignmentId);
     } catch (e) {
         console.log(`caught Exception: ${e}`);
     }
 }
 
 const main = async(email) => {
-    const [assignmentID, data] = await getRequest(email);
+    const [assignmentId, data] = await getRequest(email);
     const maxWord = findMaxFreq(data);
-    await postResponse(email, [assignmentID, maxWord]);
+    await postResponse(email, [assignmentId, maxWord]);
 }
 
 main(`kapardhikannekanti@gmail.com`);
